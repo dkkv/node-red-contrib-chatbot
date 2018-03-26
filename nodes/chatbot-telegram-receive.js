@@ -35,6 +35,7 @@ module.exports = function(RED) {
     this.usernames = n.usernames != null ? n.usernames.split(',') : [];
     this.polling = n.polling;
     this.parseMode = n.parseMode;
+    this.providerToken = n.providerToken;
 
     if (!isUsed) {
       // silently exit, this node is not used
@@ -50,9 +51,8 @@ module.exports = function(RED) {
     console.log(green('Telegram Bot ' + this.botname + ' will be launched, environment is ' + environment));
 
     if (this.credentials) {
-      this.token = this.credentials.token;
+      this.token = this.credentials.token != null ? this.credentials.token.trim() : null;
       if (this.token) {
-        this.token = this.token.trim();
         if (!this.chat) {
           // get the context storage node
           var contextStorageNode = RED.nodes.getNode(this.store);
@@ -77,10 +77,12 @@ module.exports = function(RED) {
           node.contextProvider = contextProviders.getProvider(contextStorage, contextParams);
           // try to start the servers
           try {
+            console.log('---providerToken', node.providerToken);
             node.contextProvider.start();
             node.chat = TelegramServer.createServer({
               authorizedUsernames: node.usernames,
               token: node.token,
+              providerToken: node.providerToken,
               polling: node.polling,
               parseMode: node.parseMode,
               contextProvider: node.contextProvider,
