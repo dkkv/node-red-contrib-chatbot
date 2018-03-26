@@ -26,6 +26,7 @@ module.exports = function(RED) {
     RED.nodes.createNode(this, n);
     var node = this;
     var environment = this.context().global.environment === 'production' ? 'production' : 'development';
+    var isUsed = utils.isUsed(RED, node.id);
     var startNode = utils.isUsedInEnvironment(RED, node.id, environment);
 
     this.botname = n.botname;
@@ -36,6 +37,10 @@ module.exports = function(RED) {
     this.parseMode = n.parseMode;
     this.providerToken = n.providerToken;
 
+    if (!isUsed) {
+      // silently exit, this node is not used
+      return;
+    }
     // exit if the node is not meant to be started in this environment
     if (!startNode) {
       // eslint-disable-next-line no-console
