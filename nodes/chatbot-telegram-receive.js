@@ -77,7 +77,6 @@ module.exports = function(RED) {
           node.contextProvider = contextProviders.getProvider(contextStorage, contextParams);
           // try to start the servers
           try {
-            console.log('---providerToken', node.providerToken);
             node.contextProvider.start();
             node.chat = TelegramServer.createServer({
               authorizedUsernames: node.usernames,
